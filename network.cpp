@@ -7,6 +7,15 @@ using std::cout; using std::cin; using std::endl;
 using std::string;
 using std::vector;
 
+/**
+ * @brief Configurable neural network.
+ *
+ * Application of Michael Nielsen's four equations of back-propagation
+ * following a neural network structure.
+ *
+ * @param layerSizes Array containing the sizes of each layer to be \
+ *                   constructed in the network.
+ */
 class Network {
 public:
     vector<int> layerSizes;
