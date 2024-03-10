@@ -23,14 +23,15 @@ using Eigen::VectorXd; using Eigen::MatrixXd;
 class Network {
 public:
     vector<size_t> layerSizes;
+    size_t amountOfLayers;
 
     Network(
         vector<size_t> ls
     ):
-        layerSizes(ls)
+        layerSizes(ls),
+        amountOfLayers(ls.size())
     {
         vector<MatrixXd> weightsByLayer;
-        size_t amountOfLayers = layerSizes.size();
         for (
             size_t layerIndex = 0;
             layerIndex < amountOfLayers - 1;
