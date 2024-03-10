@@ -24,6 +24,8 @@ class Network {
 public:
     vector<size_t> layerSizes;
     size_t amountOfLayers;
+    vector<MatrixXd> weightsByLayer;
+    vector<VectorXd> biasesByLayer;
 
     Network(
         vector<size_t> ls
@@ -31,7 +33,6 @@ public:
         layerSizes(ls),
         amountOfLayers(ls.size())
     {
-        vector<MatrixXd> weightsByLayer;
         for (
             size_t layerIndex = 0;
             layerIndex < amountOfLayers - 1;
@@ -59,6 +60,7 @@ public:
             );
 
             weightsByLayer.push_back(layerWeights);
+            biasesByLayer.push_back(layerBiases);
         }
     }
 };
