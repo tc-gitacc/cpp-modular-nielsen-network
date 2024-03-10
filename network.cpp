@@ -32,12 +32,12 @@ public:
         vector<MatrixXd> weightsByLayer;
         size_t amountOfLayers = layerSizes.size();
         for (
-            size_t layerPosition = 0;
-            layerPosition < amountOfLayers - 1;
-            ++layerPosition
+            size_t layerIndex = 0;
+            layerIndex < amountOfLayers - 1;
+            ++layerIndex
         ) {
-            size_t outgoingLayerSize = layerSizes[layerPosition];
-            size_t incomingLayerSize = layerSizes[layerPosition + 1];
+            size_t outgoingLayerSize = layerSizes[layerIndex];
+            size_t incomingLayerSize = layerSizes[layerIndex + 1];
 
             MatrixXd layerWeights = MatrixXd::Random(
                 incomingLayerSize, outgoingLayerSize
