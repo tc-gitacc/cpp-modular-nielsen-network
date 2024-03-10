@@ -7,6 +7,8 @@ using std::cout; using std::cin; using std::endl;
 using std::string;
 using std::vector;
 
+using Eigen::VectorXd; using Eigen::MatrixXd;
+
 /**
  * @brief Configurable neural network.
  *
@@ -25,7 +27,7 @@ public:
     ):
         layerSizes(ls)
     {
-        vector<Eigen::MatrixXd> weightsByLayer;
+        vector<MatrixXd> weightsByLayer;
         int amountOfLayers = layerSizes.size();
         for (
             int layerPosition = 0;
@@ -35,22 +37,22 @@ public:
             int outgoingLayerSize = layerSizes[layerPosition];
             int incomingLayerSize = layerSizes[layerPosition + 1];
 
-            Eigen::MatrixXd layerWeights = Eigen::MatrixXd::Random(
+            MatrixXd layerWeights = MatrixXd::Random(
                 incomingLayerSize, outgoingLayerSize
             );
-            Eigen::VectorXd layerBiases = Eigen::VectorXd::Random(
+            VectorXd layerBiases = VectorXd::Random(
                 incomingLayerSize
             );
 
             layerWeights = 0.5 * (
                 layerWeights
-                + Eigen::MatrixXd::Ones(
+                + MatrixXd::Ones(
                     incomingLayerSize, outgoingLayerSize
                 )
             );
             // TODO: Include optional division by square root of amount of outgoing weights
             layerBiases = 0.5 * (
-                layerBiases + Eigen::VectorXd::Ones(incomingLayerSize)
+                layerBiases + VectorXd::Ones(incomingLayerSize)
             );
 
             weightsByLayer.push_back(layerWeights);
