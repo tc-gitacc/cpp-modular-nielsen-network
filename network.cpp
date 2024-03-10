@@ -17,9 +17,10 @@ public:
         layerSizes(ls)
     {
         vector<Eigen::MatrixXd> weightsByLayer;
+        int amountOfLayers = layerSizes.size();
         for (
             int layerPosition = 0;
-            layerPosition < layerSizes.size() - 1;
+            layerPosition < amountOfLayers - 1;
             ++layerPosition
         ) {
             int outgoingLayerSize = layerSizes[layerPosition];
