@@ -1,11 +1,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstddef>
 #include <Eigen/Dense>
 
 using std::cout; using std::cin; using std::endl;
 using std::string;
 using std::vector;
+using std::size_t;
 
 using Eigen::VectorXd; using Eigen::MatrixXd;
 
@@ -20,22 +22,22 @@ using Eigen::VectorXd; using Eigen::MatrixXd;
  */
 class Network {
 public:
-    vector<int> layerSizes;
+    vector<size_t> layerSizes;
 
     Network(
-        vector<int> ls
+        vector<size_t> ls
     ):
         layerSizes(ls)
     {
         vector<MatrixXd> weightsByLayer;
-        int amountOfLayers = layerSizes.size();
+        size_t amountOfLayers = layerSizes.size();
         for (
-            int layerPosition = 0;
+            size_t layerPosition = 0;
             layerPosition < amountOfLayers - 1;
             ++layerPosition
         ) {
-            int outgoingLayerSize = layerSizes[layerPosition];
-            int incomingLayerSize = layerSizes[layerPosition + 1];
+            size_t outgoingLayerSize = layerSizes[layerPosition];
+            size_t incomingLayerSize = layerSizes[layerPosition + 1];
 
             MatrixXd layerWeights = MatrixXd::Random(
                 incomingLayerSize, outgoingLayerSize
