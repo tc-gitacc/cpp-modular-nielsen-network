@@ -326,4 +326,70 @@ public:
 
         return miniBatches;
     }
+    /**
+     * @brief Lorem ipsum.
+     *
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua.
+     * Mi ipsum faucibus vitae aliquet. Nibh mauris cursus mattis molestie a
+     * iaculis at erat. Massa vitae tortor condimentum lacinia quis.
+     *
+     * @param loremIpsum In egestas erat imperdiet sed euismod nisi. \
+     *                   Pellentesque dignissim enim.
+     *
+     * @return Lorem ipsum dolor sit amet.
+     */
+    VectorXd firstEquationOfBackpropagation(
+        VectorXd layerWeightedInputs,
+        VectorXd layerActivations,
+        VectorXd expectedActivations
+    ) {
+        /** TODO: Use the simplified calculation of the error if the cost \
+         *        and activation functions allow it.
+         *
+         * If the cost/activation pair is either Sigmoid and Cross-Entropy or
+         * Softmax and Log-likelihood, we can use the following simplified error
+         * calculation:
+         * error = activations - desired output
+         * This makes computation faster and prevents a learning slowdown.
+         *
+         * Since whether or not we can apply this simplified calculation is
+         * determined at network instantiation, we should check for this during
+         * instantiation and change this function accordingly.
+         */
+        VectorXd costGradient = CostFunction::gradient(layerActivations, expectedActivations);
+        VectorXd activationsGradient = ActivationFunction::gradient(layerWeightedInputs);
+        VectorXd errorInLayer =
+            CostFunction::gradient( layerActivations, expectedActivations)
+            .array()
+            * ActivationFunction::gradient( layerWeightedInputs )
+            .array();
+        return errorInLayer;
+    }
+
+    /**
+     * @brief Lorem ipsum.
+     *
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua.
+     * Mi ipsum faucibus vitae aliquet. Nibh mauris cursus mattis molestie a
+     * iaculis at erat. Massa vitae tortor condimentum lacinia quis.
+     *
+     * @param loremIpsum In egestas erat imperdiet sed euismod nisi. \
+     *                   Pellentesque dignissim enim.
+     *
+     * @return Lorem ipsum dolor sit amet.
+     */
+    VectorXd secondEquationOfBackpropagation(
+        MatrixXd layerWeights,
+        VectorXd weightedInputs,
+        VectorXd errorInLayer
+    ) {
+        VectorXd dotProductOfWeightsAndError =
+            layerWeights.transpose() * errorInLayer;
+        VectorXd errorInPreviousLayer =
+            dotProductOfWeightsAndError.array()
+            * ActivationFunction::gradient(weightedInputs).array();
+        return errorInPreviousLayer;
+    }
     }
