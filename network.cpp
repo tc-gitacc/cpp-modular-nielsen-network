@@ -641,4 +641,14 @@ public:
             ;
         }
     }
+
+    void evaluate(vector<std::tuple<VectorXd, VectorXd>> testData) {
+        for (const auto& testPairing: testData) {
+            VectorXd testInput = std::get<0>(testPairing);
+            VectorXd expectedOutput = std::get<1>(testPairing);
+            VectorXd networkOutput = feedforward_without_caching(testInput);
+            cout << "Got:" << endl << networkOutput << endl << endl;
+            cout << "Expected:" << endl << expectedOutput << endl << endl;
+        }
     }
+};
