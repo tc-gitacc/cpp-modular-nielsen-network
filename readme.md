@@ -17,7 +17,7 @@ This project relies on the following external libraries:
 
 In the command prompt, enter the following commands:
 
-git clone https://github.com/tony-c/cpp-modular-nielsen-network.git
+git clone https://github.com/tc-gitacc/cpp-modular-nielsen-network.git
 cd cpp-modular-nielsen-network
 
 ### 2. Install Eigen
