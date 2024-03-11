@@ -176,7 +176,6 @@ struct Quadratic: Cost<Quadratic> {
     static VectorXd gradientInternal(
         VectorXd networkOutput, VectorXd expectedOutput
     ) {
-        cout <<"Calculating cost gradient with network output of size " << networkOutput.size() << " and expected output of size " << expectedOutput.size() << endl;
         return networkOutput - expectedOutput;
     }
 };
@@ -193,10 +192,12 @@ struct Quadratic: Cost<Quadratic> {
  *
  * @tparam ActivationFunction Activation to be used throughought the network.
  *
+ * @tparam CostFunction Cost/loss function to be used to evaluate the newtork.
+ *
  * @param layerSizes Array containing the sizes of each layer to be
  *                   constructed in the network.
  */
-template<class ActivationFunction>
+template<class ActivationFunction, class CostFunction>
 class Network {
 public:
     vector<size_t> layerSizes;
