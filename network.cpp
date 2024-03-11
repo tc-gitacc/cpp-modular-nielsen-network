@@ -126,6 +126,62 @@ struct Sigmoid: Activation<Sigmoid> {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// Cost functions //////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template<class Implementation>
+struct Cost {
+    /**
+     * @brief Cost function.
+     *
+     * Calculate the cost or loss of a network.
+     *
+     * @param newtorkOutput Activations of the network's last layer.
+     *
+     * @param expectedOutput Values that are expected of the network's output.
+     *
+     * @return Cost of the network's current configuration for the training
+     *         example given.
+     */
+    static VectorXd calculate(VectorXd newtorkOutput, VectorXd expectedOutput) {
+        return Implementation::calculateInternal(newtorkOutput, expectedOutput);
+    };
+
+    /**
+     * @brief Gradient of cost.
+     *
+     * Calculate the gradient of the cost of a network over its activations.
+     *
+     * @param newtorkOutput Activations of the network's last layer.
+     *
+     * @param expectedOutput Values that are expected of the network's output.
+     *
+     * @return Gradient of the cost of a network over its activations.
+     */
+    static VectorXd gradient(VectorXd weightedInputs, VectorXd expectedOutput) {
+        return Implementation::gradientInternal(weightedInputs, expectedOutput);
+    };
+
+};
+
+struct Quadratic: Cost<Quadratic> {
+    double calculateInternal(
+        VectorXd networkOutput, VectorXd expectedOutput
+    ) {
+        VectorXd quadraticVector =
+            (expectedOutput - networkOutput).array().square() / 2;
+        return quadraticVector.norm();
+    }
+
+    static VectorXd gradientInternal(
+        VectorXd networkOutput, VectorXd expectedOutput
+    ) {
+        cout <<"Calculating cost gradient with network output of size " << networkOutput.size() << " and expected output of size " << expectedOutput.size() << endl;
+        return networkOutput - expectedOutput;
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // Neural network  /////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
