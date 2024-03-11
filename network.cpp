@@ -339,6 +339,102 @@ public:
      *
      * @return Lorem ipsum dolor sit amet.
      */
+    std::tuple<vector<MatrixXd>, vector<VectorXd>> backpropagateError(
+        std::tuple<VectorXd, VectorXd> inputAndExpectedOutput
+    ) {
+        VectorXd trainingInput = std::get<0>(inputAndExpectedOutput);
+        VectorXd expectedOutput = std::get<1>(inputAndExpectedOutput);
+
+        std::tuple<vector<VectorXd>, vector<VectorXd>>
+        weightedInputsAndActivationsByLayer = feedforward(trainingInput);
+        vector<VectorXd> weightedInputsByLayer = std::get<0>(
+            weightedInputsAndActivationsByLayer
+        );
+        vector<VectorXd> activationsByLayer = std::get<1>(
+            weightedInputsAndActivationsByLayer
+        );
+
+        vector<MatrixXd> weightGradientsByLayer;
+        vector<VectorXd> biasGradientsByLayer;
+        for (
+            size_t layerIndex = 0;
+            layerIndex < amountOfLayers - 1;
+            ++layerIndex
+        ) {
+            MatrixXd layerWeights = weightsByLayer[layerIndex];
+            VectorXd layerBiases = biasesByLayer[layerIndex];
+
+            MatrixXd layerWeightGradient = MatrixXd::Zero(
+                layerWeights.rows(), layerWeights.cols()
+            );
+            VectorXd layerBiasGradient = VectorXd::Zero(layerBiases.size());
+
+            weightGradientsByLayer.push_back(layerWeightGradient);
+            biasGradientsByLayer.push_back(layerBiasGradient);
+        }
+
+        VectorXd lastLayerWeightedInputs =
+            weightedInputsByLayer[ amountOfLayers - 2 ];
+        VectorXd lastLayerActivations =
+            activationsByLayer[ amountOfLayers - 1 ];
+        VectorXd activationsOfSecondToLastLayer =
+            activationsByLayer[ amountOfLayers - 2 ];
+
+        VectorXd errorInLastLayer = firstEquationOfBackpropagation(
+                lastLayerWeightedInputs,
+                lastLayerActivations,
+                expectedOutput
+        );
+
+        // Third equation of back-propagation
+        biasGradientsByLayer[ amountOfLayers - 2 ] =
+            errorInLastLayer;
+        // Fourth equation of back-propagation
+        MatrixXd lastLayerWeightGradient =
+            errorInLastLayer
+            * activationsOfSecondToLastLayer.transpose()
+        ;
+        weightGradientsByLayer[ amountOfLayers - 2 ] = lastLayerWeightGradient;
+
+        VectorXd errorInLayer = errorInLastLayer;
+        for (
+            size_t layerIndex = 2;
+            layerIndex < amountOfLayers - 1;
+            ++layerIndex
+        ) {
+            MatrixXd layerWeights =
+                weightsByLayer[ amountOfLayers - layerIndex ];
+            VectorXd weightedInputs
+                = weightedInputsByLayer[ amountOfLayers - layerIndex - 1 ];
+            VectorXd activationsOfPreviousLayer
+                = activationsByLayer[ amountOfLayers - layerIndex - 1 ];
+            errorInLayer = secondEquationOfBackpropagation(
+                layerWeights,
+                weightedInputs,
+                errorInLayer
+            );
+            biasGradientsByLayer[ amountOfLayers - layerIndex ] = errorInLayer;
+            MatrixXd layerWeightGradient =
+                errorInLayer
+                * activationsOfPreviousLayer.transpose()
+            ;
+            weightGradientsByLayer[ amountOfLayers - layerIndex ] = layerWeightGradient;
+        }
+        return std::make_tuple(weightGradientsByLayer, biasGradientsByLayer);
+    }
+    /**
+     * @brief Lorem ipsum.
+     *
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua.
+     * Mi ipsum faucibus vitae aliquet. Nibh mauris cursus mattis molestie a
+     * iaculis at erat. Massa vitae tortor condimentum lacinia quis.
+     *
+     * @param loremIpsum In egestas erat imperdiet sed euismod nisi. \
+     *                   Pellentesque dignissim enim.
+     *
+     * @return Lorem ipsum dolor sit amet.
+     */
     VectorXd firstEquationOfBackpropagation(
         VectorXd layerWeightedInputs,
         VectorXd layerActivations,
