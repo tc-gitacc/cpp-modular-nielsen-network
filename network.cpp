@@ -301,4 +301,29 @@ public:
         }
         return layerActivations;
     }
-};
+
+    vector<vector<std::tuple<VectorXd, VectorXd>>> generateMiniBatches(
+        vector<std::tuple<VectorXd, VectorXd>> trainingData,
+        size_t miniBatchSize
+    ) {
+        vector<vector<std::tuple<VectorXd, VectorXd>>> miniBatches;
+        size_t sizeOfTrainingData = trainingData.size();
+
+        for (
+            int batchCutoff = 0;
+            batchCutoff < sizeOfTrainingData;
+            batchCutoff += miniBatchSize
+        ) {
+            vector<std::tuple<VectorXd, VectorXd>> miniBatch(
+                trainingData.begin() + batchCutoff,
+                trainingData.begin() + std::min(
+                    batchCutoff + miniBatchSize,sizeOfTrainingData
+                )
+            );
+
+            miniBatches.push_back(miniBatch);
+        }
+
+        return miniBatches;
+    }
+    }
