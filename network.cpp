@@ -488,6 +488,7 @@ public:
         }
         return std::make_tuple(weightGradientsByLayer, biasGradientsByLayer);
     }
+
     /**
      * @brief Lorem ipsum.
      *
@@ -553,5 +554,54 @@ public:
             dotProductOfWeightsAndError.array()
             * ActivationFunction::gradient(weightedInputs).array();
         return errorInPreviousLayer;
+    }
+
+    /**
+     * @brief Lorem ipsum.
+     *
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua.
+     * Mi ipsum faucibus vitae aliquet. Nibh mauris cursus mattis molestie a
+     * iaculis at erat. Massa vitae tortor condimentum lacinia quis.
+     *
+     * @param loremIpsum In egestas erat imperdiet sed euismod nisi. \
+     *                   Pellentesque dignissim enim.
+     *
+     * @return Lorem ipsum dolor sit amet.
+     */
+    void applyParameterGradients(
+        std::tuple<vector<MatrixXd>, vector<VectorXd>> gradientsByLayer,
+        float learningRate,
+        size_t trainingDataSize
+    ) {
+        /**
+         * TODO: Include Lebesgue regularization.
+         *
+         * Lebesgue regularization, which consists in adding a term based on the
+         * sum of all the outgoing weights in the network to the cost function,
+         * has been shown to improve network performance.
+        */
+       vector<MatrixXd> weightGradientsByLayer = std::get<0>(gradientsByLayer);
+       vector<VectorXd> biasGradientsByLayer = std::get<1>(gradientsByLayer);
+        for (
+            size_t layerIndex = 0;
+            layerIndex < amountOfLayers - 1;
+            ++layerIndex
+        ) {
+            MatrixXd layerWeights = weightsByLayer[layerIndex];
+            MatrixXd weightGradient = weightGradientsByLayer[layerIndex];
+            VectorXd layerBiases = biasesByLayer[layerIndex];
+            VectorXd biasGradient = biasGradientsByLayer[layerIndex];
+
+            weightsByLayer[layerIndex] =
+                layerWeights
+                - ( learningRate / trainingDataSize ) * weightGradient
+            ;
+
+            biasesByLayer[layerIndex] =
+                layerBiases
+                - ( learningRate / trainingDataSize ) * biasGradient
+            ;
+        }
     }
     }
