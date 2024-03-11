@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <tuple>
 #include <cstddef>
 #include <Eigen/Dense>
 
@@ -122,9 +123,12 @@ struct Sigmoid: Activation<Sigmoid> {
  * Application of Michael Nielsen's four equations of back-propagation
  * following a neural network structure.
  *
- * @param layerSizes Array containing the sizes of each layer to be \
+ * @tparam ActivationFunction Activation to be used throughought the network.
+ *
+ * @param layerSizes Array containing the sizes of each layer to be
  *                   constructed in the network.
  */
+template<class ActivationFunction>
 class Network {
 public:
     vector<size_t> layerSizes;
@@ -160,5 +164,73 @@ public:
             weightsByLayer.push_back(layerWeights);
             biasesByLayer.push_back(layerBiases);
         }
+    }
+
+    /**
+     * @brief Feed input values through the network. Cache every step.
+     *
+     * Pass a given array of input activations through the network, caching and
+     * returning every intermediate result.
+     *
+     * @param inputLayer Array of input activations to be fed through the \
+     *                   network.
+     *
+     * @return Tuple composed of weighted inputs and activations per layer.
+     */
+    std::tuple<vector<VectorXd>,vector<VectorXd>>
+        feedforward(VectorXd inputLayer)
+    {
+        VectorXd layerActivations = inputLayer;
+        vector<VectorXd> weightedInputsByLayer;
+        vector<VectorXd> activationsByLayer = {layerActivations};
+
+        for (
+            size_t layerIndex = 0;
+            layerIndex < amountOfLayers - 1;
+            ++layerIndex
+        ) {
+            MatrixXd layerWeights = weightsByLayer[layerIndex];
+            VectorXd layerBiases = biasesByLayer[layerIndex];
+
+            VectorXd layerWeightedInputs =
+                layerWeights * layerActivations + layerBiases;
+            layerActivations = ActivationFunction::activate(-layerWeightedInputs);
+            weightedInputsByLayer.push_back(layerWeightedInputs);
+            activationsByLayer.push_back(layerActivations);
+        }
+
+        return std::make_tuple(weightedInputsByLayer, activationsByLayer);
+    }
+
+    /**
+     * @brief Get network output given input.
+     *
+     * Pass a given array of input activations through the network and return
+     * the corresponding output layer.
+     * Same method as Network::feedforward, only without caching intermediate
+     * steps and solely returning the output layer's activations.
+     *
+     * @param inputLayer Array of input activations to be fed through the \
+     *                   network.
+     *
+     * @return Output layer activations.
+     */
+    VectorXd feedforward_without_caching(VectorXd inputLayer)
+    {
+        VectorXd layerActivations = inputLayer;
+
+        for (
+            size_t layerIndex = 0;
+            layerIndex < amountOfLayers - 1;
+            ++layerIndex
+        ) {
+            MatrixXd layerWeights = weightsByLayer[layerIndex];
+            VectorXd layerBiases = biasesByLayer[layerIndex];
+
+            VectorXd layerWeightedInputs =
+                layerWeights * layerActivations + layerBiases;
+            layerActivations = ActivationFunction::activate(-layerWeightedInputs);
+        }
+        return layerActivations;
     }
 };
