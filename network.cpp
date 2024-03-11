@@ -326,6 +326,71 @@ public:
 
         return miniBatches;
     }
+
+    /**
+     * @brief Lorem ipsum.
+     *
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua.
+     * Mi ipsum faucibus vitae aliquet. Nibh mauris cursus mattis molestie a
+     * iaculis at erat. Massa vitae tortor condimentum lacinia quis.
+     *
+     * @param loremIpsum In egestas erat imperdiet sed euismod nisi. \
+     *                   Pellentesque dignissim enim.
+     *
+     * @return Lorem ipsum dolor sit amet.
+     */
+    std::tuple<vector<MatrixXd>, vector<VectorXd>> weightAndBiasGradients(
+        vector<std::tuple<VectorXd, VectorXd>> sample
+    ) {
+        size_t sampleSize = sample.size();
+        vector<MatrixXd> weightGradientsByLayer;
+        vector<VectorXd> biasGradientsByLayer;
+        for (
+            size_t layerIndex = 0;
+            layerIndex < amountOfLayers - 1;
+            ++layerIndex
+        ) {
+            MatrixXd layerWeights = weightsByLayer[layerIndex];
+            VectorXd layerBiases = biasesByLayer[layerIndex];
+
+            MatrixXd layerWeightGradient = MatrixXd::Zero(
+                layerWeights.rows(), layerWeights.cols()
+            );
+            VectorXd layerBiasGradient = VectorXd::Zero(layerBiases.size());
+
+            weightGradientsByLayer.push_back(layerWeightGradient);
+            biasGradientsByLayer.push_back(layerBiasGradient);
+        }
+        for (
+            const auto& inputOutputPair: sample
+        ) {
+            std::tuple<vector<MatrixXd>, vector<VectorXd>>
+            trainingExampleGradientsByLayer =
+                backpropagateError(inputOutputPair);
+
+            vector<MatrixXd> trainingExampleWeightGradientsByLayer =
+                std::get<0>(trainingExampleGradientsByLayer);
+            vector<VectorXd> trainingExampleBiasGradientsByLayer =
+                std::get<1>(trainingExampleGradientsByLayer);
+
+            for (
+                size_t layerIndex = 0;
+                layerIndex < amountOfLayers - 1;
+                ++layerIndex
+            ) {
+                weightGradientsByLayer[layerIndex] =
+                    weightGradientsByLayer[layerIndex]
+                    + trainingExampleWeightGradientsByLayer[layerIndex];
+
+                biasGradientsByLayer[layerIndex] =
+                    biasGradientsByLayer[layerIndex]
+                    + trainingExampleBiasGradientsByLayer[layerIndex];
+            }
+        }
+        return std::make_tuple(weightGradientsByLayer, biasGradientsByLayer);
+    }
+
     /**
      * @brief Lorem ipsum.
      *
