@@ -48,16 +48,9 @@ public:
                 incomingLayerSize
             );
 
-            layerWeights = 0.5 * (
-                layerWeights
-                + MatrixXd::Ones(
-                    incomingLayerSize, outgoingLayerSize
-                )
-            );
-            // TODO: Include optional division by square root of amount of outgoing weights
-            layerBiases = 0.5 * (
-                layerBiases + VectorXd::Ones(incomingLayerSize)
-            );
+            /** TODO: Include optional division by square root of amount of \
+             *        outgoing weights.
+             */
 
             weightsByLayer.push_back(layerWeights);
             biasesByLayer.push_back(layerBiases);
