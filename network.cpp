@@ -303,6 +303,43 @@ public:
         return layerActivations;
     }
 
+    /**
+     * @brief Lorem ipsum.
+     *
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua.
+     * Mi ipsum faucibus vitae aliquet. Nibh mauris cursus mattis molestie a
+     * iaculis at erat. Massa vitae tortor condimentum lacinia quis.
+     *
+     * @param loremIpsum In egestas erat imperdiet sed euismod nisi. \
+     *                   Pellentesque dignissim enim.
+     *
+     * @return Lorem ipsum dolor sit amet.
+     */
+    void stochasticGradientDescent(
+        vector<std::tuple<VectorXd, VectorXd>> trainingData,
+        size_t amountOfTrainingEpochs,
+        float learningRate,
+        size_t miniBatchSize
+    ) {
+        for (
+            size_t epochNumber = 1;
+            epochNumber <= amountOfTrainingEpochs;
+            ++epochNumber
+        ) {
+            // Shuffle training data
+            vector<vector<std::tuple<VectorXd, VectorXd>>> miniBatches =
+                generateMiniBatches(trainingData, miniBatchSize);
+            for (const auto& miniBatch: miniBatches) {
+                std::tuple<vector<MatrixXd>, vector<VectorXd>> batchGradients =
+                    weightAndBiasGradients(miniBatch);
+                applyParameterGradients(
+                    batchGradients, learningRate, miniBatch.size()
+                );
+            }
+        }
+    }
+
     vector<vector<std::tuple<VectorXd, VectorXd>>> generateMiniBatches(
         vector<std::tuple<VectorXd, VectorXd>> trainingData,
         size_t miniBatchSize
